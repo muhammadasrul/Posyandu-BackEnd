@@ -1,33 +1,26 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Profile extends CI_Controller {
-
-	public function __construct()
-	{
-		parent::__construct();
-
-		if ($this->session->userdata("nama") == null) {
-			redirect("admin/login");
-		}
-	}
+class Register extends CI_Controller {
 
 	public function index()
 	{
-		$user = $this->db->get_where("user", ["email" => $this->session->userdata("email")])->row_array();
+
+		if ($this->session->userdata("nama") != null) {
+			redirect("admin/dashboard");
+		}
+
 		$posyandu = $this->db->get("posyandu")->result_array();
 
 		$data = array(
-			'title' => "Profile",
-			'user' => $user,
+			'title' => "Register",
 			'posyandu' => $posyandu
 		);
-		$this->load->view('profile', $data);
+		$this->load->view('auth-register', $data);
 	}
 
-	public function edit()
+	public function register_act()
 	{
-		$id = $this->input->post("id");
 		$posyandu_id = $this->input->post("posyandu_id");
 		$nama = $this->input->post("nama");
 		$email = $this->input->post("email");
@@ -36,6 +29,7 @@ class Profile extends CI_Controller {
 		$tanggal_lahir = $this->input->post("tanggal_lahir");
 		$alamat = $this->input->post("alamat");
 		$posyandu = $this->db->get_where("posyandu", ["id" => $posyandu_id])->row()->nama;
+		$level = "user";
 
 		$user = [
 			"posyandu_id" => $posyandu_id,
@@ -45,14 +39,21 @@ class Profile extends CI_Controller {
 			"tempat_lahir" => $tempat_lahir,
 			"tanggal_lahir" => $tanggal_lahir,
 			"alamat" => $alamat,
-			"posyandu" => $posyandu
+			"posyandu" => $posyandu,
+			"level" => $level
 		];
 
-		$this->db->where("id", $id)->update("user", $user);
+		$is_email_exist = $this->db->get_where("user", ["email" => $email])->num_rows();
 
+		if ($is_email_exist > 0) {
+			$this->session->set_flashdata("message", '<div class="alert alert-danger mx-2">Gagal, email sudah terdaftar. Silahkan gunakan email lain.</div>');
+			redirect("admin/register");
+		}
+
+		$this->db->insert("user", $user);
 		$this->session->set_flashdata("message", '<div class="alert alert-success mx-2">Daftar akun baru berhasil. Silahkan login</div>');
 
-		redirect("admin/profile");
+		redirect("admin/login");
 	}
 
 	public function tambah_posyandu()
@@ -74,6 +75,6 @@ class Profile extends CI_Controller {
 		$this->db->insert("posyandu", $posyandu);
 		$this->session->set_flashdata("message", '<div class="alert alert-success mx-2">Berhasil menambahkan posyandu</div>');
 
-		redirect("admin/profil");
+		redirect("admin/register");
 	}
 }

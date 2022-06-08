@@ -15,8 +15,6 @@ $this->load->view('dist/_partials/header');
         </div>
 
         <div class="section-body">
-            <!-- <h2 class="section-title">Editor</h2>
-            <p class="section-lead">WYSIWYG editor and code editor.</p> -->
             <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -24,21 +22,25 @@ $this->load->view('dist/_partials/header');
                 <form action="<?=base_url("admin/blog/tambah_act")?>" method="post" enctype="multipart/form-data">
                     <div class="card-body">
                         <div class="form-group row mb-4">
-                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Category</label>
-                            <div class="col-sm-11 col-md-6">
-                                <select name="category" class="form-control selectric">
-                                    <option value="0">--Pilih Category--</option>
-                                    <?php foreach ($category as $c) {
-                                        echo '<option value="'.$c["id"].'"';
-                                        if ($c["id"] == $article["category_id"]) { 
-                                            echo 'selected';
-                                        }
-                                        echo '>'.$c["category"].'</option>';
-                                    }?>
-                                </select>
-                            </div>
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" data-toggle="modal" title="Add Category" data-target="#exampleModal" data-id="<?=$article["id"]?>"><i class="fas fa-plus"></i></button>
+                            <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Categoty</label>
+                            <div class="col-sm-12 col-md-7">
+                                <div class="input-group">
+                                    <select class="form-control select2" name="category" required>
+                                        <option value="">--Pilih Category--</option>
+                                        <?php foreach ($category as $c) {
+                                            echo '<option value="'.$c["id"].'"';
+                                            if ($c["id"] == $article["category_id"] || $c["id"] == $this->input->get("cat_id")) { 
+                                                echo 'selected';
+                                            }
+                                            echo '>'.$c["category"].'</option>';
+                                        }?>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <div class="input-group-text">
+                                        <button class="btn btn-primary" type="button" data-toggle="modal" title="Add Category" data-target="#exampleModal" data-id="<?=$article["id"]?>"><i class="fas fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group row mb-4">
@@ -95,7 +97,7 @@ $this->load->view('dist/_partials/header');
                             Category tidak boleh kosong
                         </div>
                     </div>
-                    <input name="id" id="modal-id" type="text" class="form-control" required="" hidden>
+                    <input name="id" id="modal-id" type="text" class="form-control" hidden>
                 </form>
             </div>
             <div class="modal-footer bg-whitesmoke br">

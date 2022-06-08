@@ -243,9 +243,11 @@ class Posyandu extends RestController {
 		return $data;
 	}
 
-	public function laporan_get(){
-		$date = $this->input->get("date");
-		$posyandu_id = $this->input->get("posyandu_id");
+	public function export(){
+
+		$date = $this->input->post("date");
+
+		$posyandu_id = $this->session->userdata("posyandu_id");
 		
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
@@ -336,7 +338,7 @@ class Posyandu extends RestController {
 		$sheet->mergeCells('D14:P14');
 
 		// A. Kegiatan Penimbangan
-		$sheet->setCellValue('A17', "A.");
+		// $sheet->setCellValue('A17', "A.");
 		$sheet->getStyle('A17')->getFont()->setBold(true);
 		$sheet->setCellValue('B17', "Kegiatan Penimbangan");
 		$sheet->getStyle('B17')->getFont()->setBold(true);
@@ -351,16 +353,16 @@ class Posyandu extends RestController {
 		$sheet->mergeCells('N17:O17');
 
 		$sheet->setCellValue('J18', "Lk");
-		$sheet->setCellValue('K18', "Lp");
+		$sheet->setCellValue('K18', "Pr");
 		
 		$sheet->setCellValue('L18', "Lk");
-		$sheet->setCellValue('M18', "Lp");
+		$sheet->setCellValue('M18', "Pr");
 
 		$sheet->setCellValue('N18', "Lk");
-		$sheet->setCellValue('O18', "Lp");
+		$sheet->setCellValue('O18', "Pr");
 
 		$numrow_a = 19;
-		for ($i=1; $i <= 17; $i++) { 
+		for ($i=1; $i <= 15; $i++) { 
 			$sheet->setCellValue('A'.$numrow_a++, $i);
 		}
 
@@ -484,208 +486,69 @@ class Posyandu extends RestController {
 		$sheet->setCellValue('N24', $d["l59"]);
 		$sheet->setCellValue('O24', $d["l59"]);
 
-		$sheet->setCellValue('B26', "Jumlah semua balita yang di timbang bulan ini mencapai umur 36 bulan");
-		$sheet->mergeCells('B26:G26');
-		$sheet->setCellValue('I26', ":");
-		$sheet->setCellValue('J26', count($balita_lebih_36bulan));
+		// $sheet->setCellValue('B26', "Jumlah semua balita yang di timbang bulan ini mencapai umur 36 bulan");
+		// $sheet->mergeCells('B26:G26');
+		// $sheet->setCellValue('I26', ":");
+		// $sheet->setCellValue('J26', count($balita_lebih_36bulan));
 
 		$sheet->setCellValue('B27', "Jumlah semua balita yang di timbang bulan ini mencapai umur 36 bulan dengan berat 11.5Kg atau lebih");
 		$sheet->mergeCells('B27:G27');
 		$sheet->setCellValue('H27', "(L)");
 		$sheet->setCellValue('I27', ":");
 
-		$sheet->setCellValue('B28', "Jumlah semua balita yang tidak hadir di Posyandu bulan ini");
+		$sheet->setCellValue('B26', "Jumlah semua balita yang tidak hadir di Posyandu bulan ini");
+		$sheet->mergeCells('B26:G26');
+		$sheet->setCellValue('I26', ":");
+
+		$sheet->setCellValue('B27', "Jumlah semua balita yang ada di bawah garis merah");
+		$sheet->mergeCells('B27:G27');
+		$sheet->setCellValue('I27', ":");
+
+		$sheet->setCellValue('B28', "Jumlah semua balita yang menerima vitamin A bulan ini");
 		$sheet->mergeCells('B28:G28');
 		$sheet->setCellValue('I28', ":");
 
-		$sheet->setCellValue('B29', "Jumlah semua balita yang ada di bawah garis merah");
+		$sheet->setCellValue('B29', "Jumlah semua bayi 0-5 bulan");
 		$sheet->mergeCells('B29:G29');
 		$sheet->setCellValue('I29', ":");
+		$sheet->setCellValue('J29', "Lk");
+		$sheet->setCellValue('K29', ":".$this->getJumlah($posyandu_id)["l5"]);
+		$sheet->setCellValue('L29', "Pr");
+		$sheet->setCellValue('M29', ":".$this->getJumlah($posyandu_id)["p5"]);
 
-		$sheet->setCellValue('B30', "Jumlah semua balita yang menerima vitamin A bulan ini");
+		$sheet->setCellValue('B30', "Jumlah semua bayi 6 bulan");
 		$sheet->mergeCells('B30:G30');
 		$sheet->setCellValue('I30', ":");
+		$sheet->setCellValue('J30', "Lk");
+		$sheet->setCellValue('K30', ":".$this->getJumlah($posyandu_id)["l6"]);
+		$sheet->setCellValue('L30', "Pr");
+		$sheet->setCellValue('M30', ":".$this->getJumlah($posyandu_id)["p6"]);
 
-		$sheet->setCellValue('B31', "Jumlah semua bayi 0-5 bulan");
+		$sheet->setCellValue('B31', "Jumlah semua bayi ASI Ekslusif Proses (0-5 bulan)");
 		$sheet->mergeCells('B31:G31');
 		$sheet->setCellValue('I31', ":");
 		$sheet->setCellValue('J31', "Lk");
-		$sheet->setCellValue('K31', ":".$this->getJumlah($posyandu_id)["l5"]);
+		$sheet->setCellValue('K31', ":".$this->getJumlahAsi($posyandu_id)["l5"]);
 		$sheet->setCellValue('L31', "Pr");
-		$sheet->setCellValue('M31', ":".$this->getJumlah($posyandu_id)["p5"]);
+		$sheet->setCellValue('M31', ":".$this->getJumlahAsi($posyandu_id)["p5"]);
 
-		$sheet->setCellValue('B32', "Jumlah semua bayi 6 bulan");
+		$sheet->setCellValue('B32', "Jumlah semua bayi ASI Ekslusif Lulus (6 bulan)");
 		$sheet->mergeCells('B32:G32');
 		$sheet->setCellValue('I32', ":");
 		$sheet->setCellValue('J32', "Lk");
-		$sheet->setCellValue('K32', ":".$this->getJumlah($posyandu_id)["l6"]);
+		$sheet->setCellValue('K32', ":".$this->getJumlahAsi($posyandu_id)["l6"]);
 		$sheet->setCellValue('L32', "Pr");
-		$sheet->setCellValue('M32', ":".$this->getJumlah($posyandu_id)["p6"]);
+		$sheet->setCellValue('M32', ":".$this->getJumlahAsi($posyandu_id)["p6"]);
 
-		$sheet->setCellValue('B33', "Jumlah semua bayi ASI Ekslusif Proses (0-5 bulan)");
+		$bayi_imd = $this->getJumlahImd($posyandu_id, $date);
+		$sheet->setCellValue('B33', "Jumlah semua bayi lahir dengan Inisiasi Menyusui Dini (IMD)");
 		$sheet->mergeCells('B33:G33');
 		$sheet->setCellValue('I33', ":");
 		$sheet->setCellValue('J33', "Lk");
-		$sheet->setCellValue('K33', ":".$this->getJumlahAsi($posyandu_id)["l5"]);
+		$sheet->setCellValue('K33', ":".$bayi_imd["l"]);
 		$sheet->setCellValue('L33', "Pr");
-		$sheet->setCellValue('M33', ":".$this->getJumlahAsi($posyandu_id)["p5"]);
+		$sheet->setCellValue('M33', ":".$bayi_imd["p"]);
 
-		$sheet->setCellValue('B34', "Jumlah semua bayi ASI Ekslusif Lulus (6 bulan)");
-		$sheet->mergeCells('B34:G34');
-		$sheet->setCellValue('I34', ":");
-		$sheet->setCellValue('J34', "Lk");
-		$sheet->setCellValue('K34', ":".$this->getJumlahAsi($posyandu_id)["l6"]);
-		$sheet->setCellValue('L34', "Pr");
-		$sheet->setCellValue('M34', ":".$this->getJumlahAsi($posyandu_id)["p6"]);
-
-		$bayi_imd = $this->getJumlahImd($posyandu_id, $date);
-		$sheet->setCellValue('B35', "Jumlah semua bayi lahir dengan Inisiasi Menyusui Dini (IMD)");
-		$sheet->mergeCells('B35:G35');
-		$sheet->setCellValue('I35', ":");
-		$sheet->setCellValue('J35', "Lk");
-		$sheet->setCellValue('K35', ":".$bayi_imd["l"]);
-		$sheet->setCellValue('L35', "Pr");
-		$sheet->setCellValue('M35', ":".$bayi_imd["p"]);
-
-		// B. Laporan Balita dibawah -2SD sampai -3SD
-		// $sheet->setCellValue('A37', "B.");
-		// $sheet->getStyle('A37')->getFont()->setBold(true);
-		// $sheet->setCellValue('B37', "Laporan Balita dibawah -2SD sampai -3SD");
-		// $sheet->getStyle('B37')->getFont()->setBold(true);
-
-		// $sheet->setCellValue('A38', "No");
-		// $sheet->setCellValue('B38', "Nama Balita");
-		// $sheet->setCellValue('C38', "Jenis Kelamin");
-		// $sheet->setCellValue('D38', "Nama Orang Tua");
-		// $sheet->setCellValue('E38', "Tgl Lahir");
-		// $sheet->setCellValue('F38', "Usia");
-		// $sheet->setCellValue('G38', "BB");
-		// $sheet->setCellValue('H38', "TB");
-		// $sheet->setCellValue('I38', "BBU");
-		// $sheet->setCellValue('J38', "PBU");
-		// $sheet->setCellValue('K38', "BBPB");
-
-		// $numrow_b = 39;
-
-		// Balita dibawah -2SD sampai -3SD
-		// Not implemented yet
-		// $bayi_b = $this->db->query(
-		// 	"SELECT * FROM pengukuran as p
-		// 	LEFT JOIN bayi as b
-		// 	ON p.bayi_id = b.id
-		// 	WHERE b.posyandu_id = $posyandu_id AND SUBSTRING(p.tanggal_ukur, 1, 7) = '$date'"
-		// )->result();
-
-		// foreach ($bayi_b as $i => $bayi) {
-		// 	$sheet->setCellValue('A'.$numrow_b, $i+1);
-		// 	$sheet->setCellValue('B'.$numrow_b, $bayi->nama);
-		// 	$sheet->setCellValue('C'.$numrow_b, $bayi->jenis_kelamin);
-		// 	$sheet->setCellValue('D'.$numrow_b, $bayi->nama_ibu);
-		// 	$sheet->setCellValue('E'.$numrow_b, $bayi->tanggal_lahir);
-		// 	$sheet->setCellValue('F'.$numrow_b, "Usia");
-		// 	$sheet->setCellValue('G'.$numrow_b, "BB");
-		// 	$sheet->setCellValue('H'.$numrow_b, "TB");
-		// 	$sheet->setCellValue('I'.$numrow_b, "BBU");
-		// 	$sheet->setCellValue('J'.$numrow_b, "PBU");
-		// 	$sheet->setCellValue('K'.$numrow_b, "BBPB");
-		// 	$numrow_b++;
-		// }
-
-		// C. Laporan Balita BGM (dibawah -3SD)
-		// $sheet->setCellValue('A'.$numrow_b+2, "C.");
-		// $sheet->getStyle('A'.$numrow_b+2)->getFont()->setBold(true);
-		// $sheet->setCellValue('A'.$numrow_b+2, "Laporan Balita BGM (dibawah -3SD)");
-		// $sheet->getStyle('A'.$numrow_b+2)->getFont()->setBold(true);
-
-		// $sheet->setCellValue('A'.$numrow_b+3, "No");
-		// $sheet->setCellValue('B'.$numrow_b+3, "Nama Balita");
-		// $sheet->setCellValue('C'.$numrow_b+3, "Jenis Kelamin");
-		// $sheet->setCellValue('D'.$numrow_b+3, "Nama Orang Tua");
-		// $sheet->setCellValue('E'.$numrow_b+3, "Tgl Lahir");
-		// $sheet->setCellValue('F'.$numrow_b+3, "Usia");
-		// $sheet->setCellValue('G'.$numrow_b+3, "BB");
-		// $sheet->setCellValue('H'.$numrow_b+3, "TB");
-		// $sheet->setCellValue('I'.$numrow_b+3, "BBU");
-		// $sheet->setCellValue('J'.$numrow_b+3, "PBU");
-		// $sheet->setCellValue('K'.$numrow_b+3, "BBPB");
-
-		// $numrow_c = $numrow_b+4;
-
-		// Laporan Balita BGM (dibawah -3SD)
-		// Not implemented yet
-		// $bayi_c = $this->db->query(
-		// 	"SELECT * FROM pengukuran as p
-		// 	LEFT JOIN bayi as b
-		// 	ON p.bayi_id = b.id
-		// 	WHERE b.posyandu_id = $posyandu_id AND SUBSTRING(p.tanggal_ukur, 1, 7) = '$date'"
-		// )->result();
-
-		// foreach ($bayi_c as $i => $bayi) {
-		// 	$sheet->setCellValue('A'.$numrow_c, $i+1);
-		// 	$sheet->setCellValue('B'.$numrow_c, $bayi->nama);
-		// 	$sheet->setCellValue('C'.$numrow_c, $bayi->jenis_kelamin);
-		// 	$sheet->setCellValue('D'.$numrow_c, $bayi->nama_ibu);
-		// 	$sheet->setCellValue('E'.$numrow_c, $bayi->tanggal_lahir);
-		// 	$sheet->setCellValue('F'.$numrow_c, "Usia");
-		// 	$sheet->setCellValue('G'.$numrow_c, "BB");
-		// 	$sheet->setCellValue('H'.$numrow_c, "TB");
-		// 	$sheet->setCellValue('I'.$numrow_c, "BBU");
-		// 	$sheet->setCellValue('J'.$numrow_c, "PBU");
-		// 	$sheet->setCellValue('K'.$numrow_c, "BBPB");
-		// 	$numrow_c++;
-		// }
-
-		// D. Laporan Balita 2T
-		// $sheet->setCellValue('A'.$numrow_c+2, "D.");
-		// $sheet->getStyle('A'.$numrow_c+2)->getFont()->setBold(true);
-		// $sheet->setCellValue('A'.$numrow_c+2, "Laporan Balita 2T");
-		// $sheet->getStyle('A'.$numrow_c+2)->getFont()->setBold(true);
-
-		// $sheet->setCellValue('A'.$numrow_c+3, "No");
-		// $sheet->setCellValue('B'.$numrow_c+3, "Nama Balita");
-		// $sheet->setCellValue('C'.$numrow_c+3, "Jenis Kelamin");
-		// $sheet->setCellValue('D'.$numrow_c+3, "Nama Orang Tua");
-		// $sheet->setCellValue('E'.$numrow_c+3, "Tgl Lahir");
-		// $sheet->setCellValue('F'.$numrow_c+3, "Usia");
-		// $sheet->setCellValue('G'.$numrow_c+3, "BB");
-		// $sheet->setCellValue('H'.$numrow_c+3, "TB");
-
-		// $numrow_d = $numrow_c+4;
-
-		// Laporan Balita 2T
-		// Not implemented yet
-		// $bayi_d = $this->db->query(
-		// 	"SELECT * FROM pengukuran as p
-		// 	LEFT JOIN bayi as b
-		// 	ON p.bayi_id = b.id
-		// 	WHERE b.posyandu_id = $posyandu_id AND SUBSTRING(p.tanggal_ukur, 1, 7) = '$date'"
-		// )->result();
-
-		// foreach ($bayi_d as $i => $bayi) {
-		// 	$sheet->setCellValue('A'.$numrow_d, $i+1);
-		// 	$sheet->setCellValue('B'.$numrow_d, $bayi->nama);
-		// 	$sheet->setCellValue('C'.$numrow_d, $bayi->jenis_kelamin);
-		// 	$sheet->setCellValue('D'.$numrow_d, $bayi->nama_ibu);
-		// 	$sheet->setCellValue('E'.$numrow_d, $bayi->tanggal_lahir);
-		// 	$sheet->setCellValue('F'.$numrow_d, "Usia");
-		// 	$sheet->setCellValue('G'.$numrow_d, "BB");
-		// 	$sheet->setCellValue('H'.$numrow_d, "TB");
-		// 	$numrow_d++;
-		// }
-
-		// Buat header tabel nya pada baris ke 3
-		// $sheet->setCellValue('A4', "NO"); // Set kolom A4 dengan tulisan "NO"
-		// $sheet->setCellValue('B4', "NIS"); // Set kolom B4 dengan tulisan "NIS"
-		// $sheet->setCellValue('C4', "NAMA"); // Set kolom C4 dengan tulisan "NAMA"
-		// $sheet->setCellValue('D4', "JENIS KELAMIN"); // Set kolom D4 dengan tulisan "JENIS KELAMIN"
-		// $sheet->setCellValue('E4', "ALAMAT"); // Set kolom E4 dengan tulisan "ALAMAT"
-		// Apply style header yang telah kita buat tadi ke masing-masing kolom header
-		// $sheet->getStyle('A4')->applyFromArray($style_col);
-		// $sheet->getStyle('B4')->applyFromArray($style_col);
-		// $sheet->getStyle('C4')->applyFromArray($style_col);
-		// $sheet->getStyle('D4')->applyFromArray($style_col);
-		// $sheet->getStyle('E4')->applyFromArray($style_col);
-		// Panggil function view yang ada di SiswaModel untuk menampilkan semua data siswanya
 		$siswa = $this->db->get("bayi")->result();
 		$no = 1; // Untuk penomoran tabel, di awal set dengan 1
 		$numrow = 6; // Set baris pertama untuk isi tabel adalah baris ke 4

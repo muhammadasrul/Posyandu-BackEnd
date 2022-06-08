@@ -68,7 +68,8 @@ class User extends RestController {
             "tanggal_lahir" => $tanggal_lahir,
             "alamat" => $alamat,
             "posyandu" => $posyandu,
-            "posyandu_id" => $posyandu_id
+            "posyandu_id" => $posyandu_id,
+            "level" => "user"
         ];
 
         $cek = $this->db->get_where("user", ["email" => $email])->row_array();

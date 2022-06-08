@@ -6,11 +6,11 @@ $this->load->view('dist/_partials/header');
     <div class="main-content">
         <section class="section">
         <div class="section-header">
-            <h1>Edit Data Bayi</h1>
+            <h1><?=$title?></h1>
             <div class="section-header-breadcrumb">
             <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
             <div class="breadcrumb-item"><a href="#">Bayi</a></div>
-            <div class="breadcrumb-item">Edit Data Bayi</div>
+            <div class="breadcrumb-item"><?=$title?></div>
             </div>
         </div>
 
@@ -18,10 +18,11 @@ $this->load->view('dist/_partials/header');
             <div class="row">
             <div class="col-12">
                 <div class="card">
-                <form class="needs-validation" novalidate="" action="<?=base_url("admin/bayi/edit_act/".$bayi["id"])?>" method="post">
+                <form class="needs-validation" novalidate="" action="<?=base_url("admin/bayi/edit_act")?>" method="post">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12 col-md-6">
+                                <input name="id" type="text" class="form-control" value="<?=$bayi["id"]?>" hidden>
                                 <div class="form-group">
                                     <label>Nama Lengkap</label>
                                     <input name="nama" type="text" class="form-control" value="<?=$bayi["nama"]?>" required="">

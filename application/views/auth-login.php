@@ -20,7 +20,7 @@ $this->load->view('dist/_partials/header');
                 <form method="POST" action="<?=base_url('admin/login/login_act')?>" class="needs-validation" novalidate="">
                   <div class="form-group">
                     <label for="email">Email</label>
-                    <input id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus>
+                    <input id="email" type="email" class="form-control" name="email" tabindex="1" required value="<?=$this->session->flashdata("email")?>" autofocus>
                     <div class="invalid-feedback">
                       Please fill in your email
                     </div>
@@ -50,9 +50,9 @@ $this->load->view('dist/_partials/header');
 
               </div>
             </div>
-            <!-- <div class="mt-5 text-muted text-center">
-              Don't have an account? <a href="<?php echo base_url(); ?>dist/auth_register">Create One</a>
-            </div> -->
+            <div class="mt-5 text-muted text-center">
+              Belum memiliki akun? <a href="<?=base_url("admin/register")?>">Daftar sekarang</a>
+            </div>
             <div class="simple-footer">
               Copyright &copy; Stisla 2018
             </div>

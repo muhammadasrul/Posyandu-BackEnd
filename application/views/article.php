@@ -13,11 +13,15 @@ $this->load->view('dist/_partials/header');
             </div> 
             <div class="section-body container">
                 <h2 class="section-title">Article</h2>
-                <div class="card" style="height: 50vh">
-                    <div class="card-body">
-                     <div class="alert alert-danger">Belum ada artikel</div>
-                    </div>
-                </div>
+                <?php
+                    if (sizeof($article) == 0) {
+                        echo '<div class="card" style="height: 50vh">
+                                <div class="card-body">
+                                <div class="alert alert-danger">Belum ada artikel</div>
+                                </div>
+                            </div>';
+                    }
+                ?>
                 <div class="row">
                     <?php foreach ($article as $a) :?>
                     <div class="col-12 col-md-4 col-lg-4">

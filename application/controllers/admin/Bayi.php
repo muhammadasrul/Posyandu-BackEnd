@@ -16,7 +16,11 @@ class Bayi extends CI_Controller {
 	{
 		$posyandu_id = $this->session->userdata("posyandu_id");
 
-		$bayi = $this->db->get_where("bayi", ["posyandu_id" => $posyandu_id])->result_array();
+		if ($posyandu_id == null) {
+			$bayi = $this->db->get("bayi")->result_array();
+		} else {
+			$bayi = $this->db->get_where("bayi", ["posyandu_id" => $posyandu_id])->result_array();
+		}
 
         if (!$bayi) {
             $this->session->set_flashdata("message", '<div class="alert alert-danger">Data bayi kosong.</div>');
@@ -31,18 +35,39 @@ class Bayi extends CI_Controller {
 
 	public function edit($bayi_id)
 	{
-		$bayi = $this->db->get_where("bayi", ["id" => $bayi_id])->row_array();
+		if ($bayi_id != 0) {
+			$title = "Edit Data Bayi";
+			$bayi = $this->db->get_where("bayi", ["id" => $bayi_id])->row_array();
+		} else {
+			$title = "Tambah Data Bayi";
+			$bayi = [
+				"id" => "",
+				"nama" => "",
+				"tanggal_lahir" => "",
+				"anak_ke" => "",
+				"jenis_kelamin" => "",
+				"berat_badan" => "",
+				"tinggi_badan" => "",
+				"nama_ayah" => "",
+				"nama_ibu" => "",
+				"no_telp_ortu" => "",
+				"alamat" => "",
+				"rt_rw" => ""
+			];
+		}
 
 		$data = array(
-			'title' => "Edit Bayi",
+			'title' => $title,
 			'bayi' => $bayi
 		);
 
 		$this->load->view('edit', $data);
 	}
 
-	public function edit_act($bayi_id)
+	public function edit_act()
 	{
+		$bayi_id  = $this->input->post("id");
+		$posyandu_id = $this->session->userdata("posyandu_id");
 		$nama = $this->input->post("nama");
 		$tanggal_lahir = $this->input->post("tanggal_lahir");
 		$anak_ke = $this->input->post("anak_ke");
@@ -55,7 +80,8 @@ class Bayi extends CI_Controller {
 		$alamat = $this->input->post("alamat");
 		$rt_rw = $this->input->post("rt_rw");
 
-		$bayi = [
+		$data = [
+			"posyandu_id" => $posyandu_id,
 			"nama" => $nama,
 			"tanggal_lahir" => $tanggal_lahir,
 			"anak_ke" => $anak_ke,
@@ -69,7 +95,22 @@ class Bayi extends CI_Controller {
 			"rt_rw" => $rt_rw
 		];
 
-		$this->db->where("id", $bayi_id)->update("bayi", $bayi);
+		if ($bayi_id != null) {
+            $update = $this->db->where("id", $bayi_id)->update("bayi", $data);
+        } else {
+            $insert = $this->db->insert("bayi", $data);
+
+            $bayi = $this->db->get("bayi")->last_row();
+            $bayi_id = $bayi->id;
+
+            $data_pengukuran = [
+                "bayi_id" => $bayi_id,
+                "tinggi_badan" => $tinggi_badan,
+                "berat_badan" => $berat_badan,
+                "status_berat_badan" => "b"
+            ];
+            $this->db->insert("pengukuran", $data_pengukuran);
+        }
 
 		redirect("admin/bayi");
 	}
@@ -160,4 +201,18 @@ class Bayi extends CI_Controller {
 			redirect("admin/bayi");
         }
     }
+
+	public function detail($bayi_id)
+	{
+		$bayi = $this->db->get_where("bayi", ["id" => $bayi_id])->row_array();
+		$pengukuran = $this->db->get_where("pengukuran", ["bayi_id" => $bayi_id])->result_array();
+
+		$data = [
+			'title' => "Detail Data Bayi",
+			'bayi' => $bayi,
+			'pengukuran' => $pengukuran
+		];
+
+		$this->load->view('bayi_detail', $data);
+	}
 }

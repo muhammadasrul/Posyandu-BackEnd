@@ -18,44 +18,45 @@ $this->load->view('dist/_partials/header');
             <div class="row mt-sm-4">
               <div class="col-12">
                 <div class="card">
-                  <form method="post" class="needs-validation" novalidate="">
+                  <form method="post" class="needs-validation" novalidate="" action="<?=base_url("admin/profile/edit")?>">
                     <div class="card-header">
                       <h4>Edit Profile</h4>
                     </div>
                     <div class="card-body">
                       <div class="row">
+                        <input name="id" type="text" class="form-control" required="" value="<?=$user["id"]?>" hidden>
                         <div class="col-12 col-md-6">
                           <div class="row">
                             <div class="form-group col-12">
                               <label>Nama</label>
-                              <input type="text" class="form-control" value="<?=$user["nama"]?>" required="">
+                              <input name="nama" type="text" class="form-control" required="" value="<?=$user["nama"]?>" >
                               <div class="invalid-feedback">
-                                Please fill in the first name
+                                Nama tidak boleh kosong
                               </div>
                             </div>
                           </div>
                           <div class="row">
                             <div class="form-group col-12">
                               <label>Email</label>
-                              <input type="email" class="form-control" value="<?=$user["email"]?>" required="">
+                              <input name="email" type="email" class="form-control" required="" value="<?=$user["email"]?>" >
                               <div class="invalid-feedback">
-                                Please fill in the email
+                                Email tidak boleh kosong
                               </div>
                             </div>
                           </div>
                           <div class="row">                               
                             <div class="form-group col-md-6 col-12">
                               <label>Tempat Lahir</label>
-                              <input type="text" class="form-control" value="<?=$user["tempat_lahir"]?>" required="">
+                              <input name="tempat_lahir" type="text" class="form-control" required="" value="<?=$user["tempat_lahir"]?>" >
                               <div class="invalid-feedback">
-                                Please fill in the first name
+                                Tempat Lahir tidak boleh kosong
                               </div>
                             </div>
                             <div class="form-group col-md-6 col-12">
                               <label>Tanggal Lahir</label>
-                              <input type="text" class="form-control" value="<?=$user["tanggal_lahir"]?>" required="">
+                              <input name="tanggal_lahir" type="text" class="form-control datepicker" required="" value="<?=$user["tanggal_lahir"]?>"  placeholder="yyyy/mm/dd" autocomplete="off">
                               <div class="invalid-feedback">
-                                Please fill in the first name
+                                Tanggal Lahir tidak boleh kosong
                               </div>
                             </div>
                           </div>
@@ -65,35 +66,52 @@ $this->load->view('dist/_partials/header');
                           <div class="row">
                             <div class="form-group col-12">
                               <label>Alamat</label>
-                              <input type="email" class="form-control" value="<?=$user["alamat"]?>" required="">
+                              <input name="alamat" type="text" class="form-control" required="" value="<?=$user["alamat"]?>" >
                               <div class="invalid-feedback">
-                                Please fill in the email
+                                Alamat tidak boleh kosong
                               </div>
                             </div>
                           </div>
-                          <div class="row">
-                            <div class="form-group col-12">
-                              <label>Posyandu</label>
-                              <input type="email" class="form-control" value="<?=$user["posyandu"]?>" required="">
-                              <div class="invalid-feedback">
-                                Please fill in the email
+                          <?php
+                          if ($this->session->userdata("level") != "admin") { ?>
+                            <div class="form-group">
+                              <label>Posyandu</label> <code>(tambahkan jika belum tersedia di daftar)</code>
+                              <div class="input-group">
+                                <select class="form-control select2" name="posyandu_id" required>
+                                  <option value="">--Pilih Posyandu--</option>
+                                    <?php foreach ($posyandu as $p) {
+                                        echo '<option value="'.$p["id"].'"';
+                                        if ($p["id"] == $user["posyandu_id"]) {
+                                          echo 'selected';
+                                        }
+                                        echo '>'.$p["nama"].'</option>';
+                                    }?>
+                                </select>
+                                <div class="input-group-append">
+                                  <div class="input-group-text">
+                                  <button class="btn btn-primary" type="button" data-toggle="modal" title="Add Posyandu" data-target="#exampleModal"><i class="fas fa-plus"></i></button>
+                                  </div>
+                                </div>
                               </div>
+                              <div class="invalid-feedback">
+                                  Posyandu tidak boleh kosong
+                                </div>
                             </div>
-                          </div>
+                          <?php } ?>
                           <div class="row">
                             <div class="form-group col-12">
                               <label>Password</label>
-                              <input type="email" class="form-control" required="">
+                              <input name="password" type="password" class="form-control" required="">
                               <div class="invalid-feedback">
-                                Please fill in the email
+                                Password tidak boleh kosong
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </div>  
                       </div>
                     </div>
                     <div class="card-footer text-right">
-                      <button class="btn btn-primary">Save Changes</button>
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
                     </div>
                   </form>
                 </div>

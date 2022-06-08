@@ -14,7 +14,7 @@ class Blog extends CI_Controller {
 
 	public function index()
 	{
-		$articles = $this->db->query("SELECT * FROM article LEFT JOIN article_category ON article.category_id = article_category.id")->result_array();
+		$articles = $this->db->query("SELECT article.*, article_category.category FROM article LEFT JOIN article_category ON article.category_id = article_category.id")->result_array();
 
 		$data = [
 			'title' => "Blog",
@@ -115,6 +115,12 @@ class Blog extends CI_Controller {
 		$id = $this->input->post("id");
 
 		$this->db->insert("article_category", ["category" => $category]);
-		redirect("admin/blog/tambah?id=".$id);
+
+		if ($id == "") {
+			$cat_id = $this->db->get("article_category")->last_row()->id;
+			redirect("admin/blog/tambah?cat_id=".$cat_id);
+		} else {
+			redirect("admin/blog/tambah?id=".$id);
+		}
 	}
 }

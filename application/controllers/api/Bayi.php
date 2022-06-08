@@ -32,6 +32,7 @@ class Bayi extends RestController {
 
     public function tambah_post()
     {
+        $bayi_id = $this->input->post("bayi_id");
         $nama = $this->input->post("nama");
         $posyandu_id = $this->input->post("posyandu_id");
         $tanggal_lahir = $this->input->post("tanggal_lahir");
@@ -60,30 +61,29 @@ class Bayi extends RestController {
             "rt_rw" => $rt_rw
         ];
 
-        $insert = $this->db->insert("bayi", $data);
-
-        $bayi = $this->db->get("bayi")->last_row();
-        $bayi_id = $bayi->id;
-
-        $data_pengukuran = [
-            "bayi_id" => $bayi_id,
-            "tinggi_badan" => $tinggi_badan,
-            "berat_badan" => $berat_badan,
-            "status_berat_badan" => "b"
-        ];
-        $this->db->insert("pengukuran", $data_pengukuran);
-
-        if ($insert) {
-            $this->response( [
-                'status' => true,
-                'message' => 'Tambah data bayi berhasil!'
-            ], 200 );
+        if ($bayi_id != null) {
+            $update = $this->db->where("id", $bayi_id)->update("bayi", $data);
+            $message =  'Edit data bayi berhasil!';
         } else {
-            $this->response( [
-                'status' => false,
-                'message' => 'Tambah data bayi gagal!'
-            ], 200 );
+            $insert = $this->db->insert("bayi", $data);
+
+            $bayi = $this->db->get("bayi")->last_row();
+            $bayi_id = $bayi->id;
+
+            $data_pengukuran = [
+                "bayi_id" => $bayi_id,
+                "tinggi_badan" => $tinggi_badan,
+                "berat_badan" => $berat_badan,
+                "status_berat_badan" => "b"
+            ];
+            $this->db->insert("pengukuran", $data_pengukuran);
+            $message = 'Tambah data bayi berhasil!';
         }
+
+        $this->response( [
+            'status' => true,
+            'message' => $message
+        ], 200 );
     }
 
     public function hapus_post()
@@ -225,4 +225,28 @@ class Bayi extends RestController {
             ], 200 );
         }
     }
+
+    public function detail_get()
+	{
+        $bayi_id = $this->input->get("bayi_id");
+        
+		$bayi = $this->db->get_where("bayi", ["id" => $bayi_id])->row_array();
+		$pengukuran = $this->db->get_where("pengukuran", ["bayi_id" => $bayi_id])->result_array();
+
+		if (sizeof($pengukuran) > 0) {
+            $this->response( [
+                'status' => true,
+                'message' => '',
+                'data' => [
+                    'pengukuran' => $pengukuran,
+                    'bayi' => $bayi
+                ]
+            ], 200 );
+        } else {
+            $this->response( [
+                'status' => false,
+                'message' => 'Data pengukuran kosong!'
+            ], 200 );
+        }
+	}
 }

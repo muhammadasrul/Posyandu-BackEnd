@@ -29,6 +29,7 @@ class Login extends CI_Controller {
 
 				redirect("admin/dashboard");
 			} else {
+				$this->session->set_flashdata("email", $email);
 				$this->session->set_flashdata("message", '<div class="alert alert-danger mx-2">Password salah.</div>');
 			}
 		} else {

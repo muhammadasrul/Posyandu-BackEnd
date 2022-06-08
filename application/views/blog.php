@@ -18,7 +18,13 @@ $this->load->view('dist/_partials/header');
             <a href="<?=base_url("admin/blog/tambah")?>" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> New Article</a>
             <div class="card">
                 <div class="card-body">
-                <?php foreach ($articles as $article) : ?>
+                <?php
+                if (sizeof($articles) == 0) {
+                    echo '<div class="card-body" style="height: 50vh">
+                            <div class="alert alert-danger">Belum ada artikel</div>
+                        </div>';
+                }
+                foreach ($articles as $article) : ?>
                     <ul class="list-unstyled list-unstyled-border">
                         <li class="media">
                             <img class="mr-3" width="50" height="50" src="<?=base_url("uploads/thumb/").$article["thumb"]?>" alt="avatar">

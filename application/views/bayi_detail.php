@@ -6,10 +6,11 @@ $this->load->view('dist/_partials/header');
     <div class="main-content">
         <section class="section">
         <div class="section-header">
-            <h1>Data Bayi</h1>
+            <h1><?=$title?></h1>
             <div class="section-header-breadcrumb">
             <div class="breadcrumb-item active"><a href="<?=base_url("admin/dashboard")?>">Dashboard</a></div>
-            <div class="breadcrumb-item">Data Bayi</div>
+            <div class="breadcrumb-item active"><a href="<?=base_url("admin/bayi")?>">Bayi</a></div>
+            <div class="breadcrumb-item"><?=$title?></div>
             </div>
         </div>
 
@@ -17,46 +18,68 @@ $this->load->view('dist/_partials/header');
             <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                Nama
+                            </div>
+                            <div class="col-12 col-md-9">
+                                <b><?=$bayi["nama"]?></b>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                Tanggal Lahir
+                            </div>
+                            <div class="col-12 col-md-9">
+                                <b><?=mdate("%d %F %Y", strtotime($bayi["tanggal_lahir"]))?></b>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-3">
+                                Umur
+                            </div>
+                            <div class="col-12 col-md-9">
+                                <?php
+                                    $tanggal_ukur = new DateTime();
+                                    $tanggal_lahir = new DateTime($bayi["tanggal_lahir"]);
+                                    $interval = $tanggal_lahir->diff($tanggal_ukur);
+                                    $umur = $interval->y*12+$interval->m;
+
+                                    echo "<b>".$interval->y." tahun ".$interval->m." bulan ".$interval->d." hari </b>";
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
                 <div class="card-body">
-                    <?php echo $this->session->flashdata("message");
-                        if ($this->session->userdata("level") != "admin") {
-                            echo '<a href="'.base_url("admin/bayi/edit/0").'" class="btn btn-primary mb-3"><i class="fas fa-plus"></i> Tambah Data</a>';
-                        }
-                    ?>
                     <table class="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Nama</th>
-                            <th scope="col">Jenis Kelamin</th>
-                            <th scope="col">Tanggal Lahir</th>
-                            <th scope="col">Nama Ayah</th>
-                            <th scope="col">Nama Ibu</th>
-                            <th scope="col">Alamat</th>
-                            <th scope="col">Tindakan</th>
+                            <th scope="col">Tanggal Pencatatan</th>
+                            <th scope="col">Tinggi Badan</th>
+                            <th scope="col">Berat Badan</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">ASI</th>
+                            <th scope="col">IMD</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($data as $index => $bayi) : 
-                            $tanggal_lahir = mdate("%d %F %Y", strtotime($bayi["tanggal_lahir"]));
+                        <?php foreach ($pengukuran as $index => $p) : 
+                            $tanggal_ukur = mdate("%d %F %Y", strtotime($p["tanggal_ukur"]));
                         ?>
                         <tr>
                             <th scope="row"><?=$index+1?></th>
-                            <td><?=$bayi["nama"]?></td>
-                            <td><?=$bayi["jenis_kelamin"]?></td>
-                            <td><?=$tanggal_lahir?></td>
-                            <td><?=$bayi["nama_ayah"]?></td>
-                            <td><?=$bayi["nama_ibu"]?></td>
-                            <td><?=$bayi["alamat"]?></td>
-                            <td>
-                                <span data-toggle="modal" data-target="#exampleModal" data-id="<?=$bayi["id"]?>" data-nama="<?=$bayi["nama"]?>">
-                                    <button class="btn btn-sm btn-primary" data-toggle="tooltip" title="Catat Pengukuran"><i class="fas fa-plus"></i></button>
-                                </span>
-                                <a class="btn btn-sm btn-warning mr-1" href="<?=base_url("admin/bayi/edit/".$bayi["id"])?>" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                                <a class="btn btn-sm btn-danger" data-toggle="tooltip" title="Delete" data-confirm="Hapus Data|Apakah Anda yakin ingin menghapus data <?=$bayi['nama']?>?" data-confirm-yes="window.location.href = '<?=base_url("admin/bayi/hapus/".$bayi["id"])?>'"><i class="fas fa-trash text-white"></i></a>
-                                <a href="<?=base_url("admin/bayi/sertifikat/".$bayi["id"])?>" class="btn btn-sm btn-success" data-toggle="tooltip" title="Download Sertifikat"><i class="fas fa-download text-white"></i></a>
-                                <a href="<?=base_url("admin/bayi/detail/".$bayi["id"])?>" class="btn btn-sm btn-info" data-toggle="tooltip" title="Detail"><i class="fas fa-info text-white px-1"></i></a>
-                            </td>
+                            <td><?=$tanggal_ukur?></td>
+                            <td><?=$p["tinggi_badan"]?></td>
+                            <td><?=$p["berat_badan"]?></td>
+                            <td><?=$p["status_berat_badan"]?></td>
+                            <td><?=$p["asi"] == 0 ? "Tidak" : "Ya"?></td>
+                            <td><?=$p["imd"] == 0 ? "Tidak" : "Ya"?></td>
                         </tr>
                         <?php endforeach ?>
                     </tbody>
